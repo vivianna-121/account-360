@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account 360 — Tingyi Lu</title>
+<meta name="description" content="A governed account model with a natural language layer: one row per account, 70 signals, six source domains, and a deliberate limit on what the AI is allowed to decide.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FCFCFA;
+  --ink:#191917;
+  --muted:#6E6E68;
+  --faint:#9A9A93;
+  --rule:#E5E4DF;
+  --indigo:#534AB7;
+  --indigo-wash:#EEEDFE;
+  --amber:#854F0B;
+  --amber-wash:#FFF8E6;
+  --serif:"Newsreader",Georgia,serif;
+  --mono:"DM Mono",ui-monospace,monospace;
+  --measure:36rem;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}*{animation:none!important;transition:none!important;}}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:19px;line-height:1.62;
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:46rem;margin:0 auto;padding:0 1.9rem;}
+/* wide elements break out of the reading measure */
+.bleed{width:min(72rem,calc(100vw - 3.8rem));margin-left:50%;transform:translateX(-50%);}
+
+/* ---------- masthead ---------- */
+.masthead{
+  display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;
+  padding:2.2rem 0 0;
+}
+.who{font-size:1rem;font-weight:500;letter-spacing:.01em;}
+.who span{color:var(--muted);font-weight:300;margin-left:.55rem;}
+.masthead nav{margin-left:auto;display:flex;gap:1.4rem;}
+.masthead nav a{
+  font-family:var(--mono);font-size:.74rem;color:var(--muted);
+  text-decoration:none;border-bottom:1px solid var(--rule);padding-bottom:1px;
+}
+.masthead nav a:hover,.masthead nav a:focus-visible{color:var(--indigo);border-color:var(--indigo);}
+
+/* ---------- hero: the query ---------- */
+.hero{padding:5rem 0 4.2rem;}
+.prompt{
+  font-family:var(--mono);font-size:.74rem;color:var(--faint);
+  margin-bottom:1.1rem;
+}
+.q{
+  font-size:clamp(2.05rem,5.6vw,3.35rem);
+  font-weight:300;font-style:italic;line-height:1.24;
+  letter-spacing:-.016em;max-width:19ch;
+  text-wrap:balance;
+}
+.caret{
+  display:inline-block;width:.06em;height:.82em;
+  background:var(--indigo);margin-left:.14em;
+  transform:translateY(.06em);
+  animation:blink 1.15s steps(1,end) infinite;
+}
+@keyframes blink{50%{opacity:0;}}
+@media (prefers-reduced-motion:reduce){.caret{animation:none;}}
+.hero .lede{
+  margin-top:2.2rem;max-width:var(--measure);
+  font-size:1.16rem;color:var(--muted);font-weight:300;
+}
+.hero .lede strong{color:var(--ink);font-weight:500;}
+
+/* ---------- sections ---------- */
+section{padding:3.6rem 0;border-top:1px solid var(--rule);}
+h2{
+  font-size:1.34rem;font-weight:500;letter-spacing:-.008em;
+  margin-bottom:1.5rem;
+}
+h3{font-size:1.02rem;font-weight:600;letter-spacing:-.004em;margin-bottom:.4rem;}
+p{max-width:var(--measure);}
+p + p{margin-top:1.05rem;}
+.note{font-size:.95rem;color:var(--muted);}
+
+/* ---------- six blocks ---------- */
+.blocks{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:10px;overflow:hidden;
+  margin-top:.5rem;
+}
+.blocks > div{background:var(--paper);padding:1.5rem 1.45rem 1.65rem;}
+.blocks .ask{
+  font-size:1.02rem;font-style:italic;font-weight:400;
+  line-height:1.35;margin-bottom:.7rem;
+}
+.blocks .meta{
+  font-family:var(--mono);font-size:.7rem;color:var(--faint);
+  line-height:1.55;
+}
+.blocks .meta b{color:var(--muted);font-weight:500;}
+@media(max-width:820px){.blocks{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:520px){.blocks{grid-template-columns:1fr;}}
+
+.tally{
+  font-family:var(--mono);font-size:.74rem;color:var(--muted);
+  margin-top:1rem;
+}
+
+/* ---------- defined-not-inherited blocks ---------- */
+.def{padding-left:1.1rem;border-left:2px solid var(--indigo);}
+.def + .def{margin-top:2rem;}
+.def h3{margin-bottom:.45rem;}
+
+/* ---------- build flow ---------- */
+.flow{
+  margin-top:.4rem;border:1px solid var(--rule);border-radius:10px;
+  background:#fff;padding:1.6rem 1.2rem;overflow-x:auto;
+}
+.flow svg{display:block;width:100%;min-width:640px;height:auto;margin:0 auto;max-width:900px;}
+
+/* ---------- ai layer callout ---------- */
+.split{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--rule);border:1px solid var(--rule);
+  border-radius:10px;overflow:hidden;margin-top:.4rem;
+}
+.split > div{background:var(--paper);padding:1.4rem 1.35rem;}
+.split .tag{font-family:var(--mono);font-size:.68rem;color:var(--faint);display:block;margin-bottom:.5rem;}
+.split p{max-width:none;font-size:1rem;}
+@media(max-width:640px){.split{grid-template-columns:1fr;}}
+
+.caveat{
+  margin-top:1.4rem;background:var(--amber-wash);
+  border:1px solid rgba(186,117,23,.28);border-radius:8px;
+  padding:.95rem 1.1rem;font-size:.95rem;color:var(--amber);
+  max-width:var(--measure);
+}
+
+/* ---------- demo cta ---------- */
+.demo{border-top:1px solid var(--rule);padding:4rem 0 4.5rem;}
+.demo-card{
+  background:#0c0d10;border-radius:12px;padding:2.6rem 2.4rem;
+  color:#e4e4f0;
+}
+.demo-card h2{color:#fff;margin-bottom:.8rem;}
+.demo-card p{color:#8f8fa6;font-weight:300;max-width:42rem;}
+.btn{
+  display:inline-block;margin-top:1.8rem;
+  background:var(--indigo);color:#fff;text-decoration:none;
+  font-family:var(--mono);font-size:.82rem;
+  padding:.72rem 1.5rem;border-radius:7px;
+  transition:background .14s ease;
+}
+.btn:hover,.btn:focus-visible{background:#6960d4;}
+.demo-card .sub{
+  font-family:var(--mono);font-size:.72rem;color:#5c5c72;
+  margin-top:1.1rem;
+}
+
+footer{
+  border-top:1px solid var(--rule);padding:2rem 0 3.5rem;
+  font-family:var(--mono);font-size:.72rem;color:var(--faint);
+  display:flex;gap:1.4rem;flex-wrap:wrap;
+}
+footer a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--rule);}
+footer a:hover,footer a:focus-visible{color:var(--indigo);}
+a:focus-visible,.btn:focus-visible{outline:2px solid var(--indigo);outline-offset:3px;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="who">Tingyi Lu <span>analytics engineering</span></div>
+    <nav>
+      <a href="https://www.linkedin.com/">LinkedIn</a>
+      <a href="mailto:tingyilu121@gmail.com">Email</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div class="prompt">Ask the account base</div>
+    <div class="q">Which Up for Renewal accounts have no open pipeline?<span class="caret"></span></div>
+    <p class="lede">Answering that meant reconciling six source domains into one governed row per account, and deciding what the language model was allowed to do with them. This is <strong>Account 360</strong>: 62,244 accounts, 70 pre-calculated signals, and a natural language layer that never touches a number.</p>
+  </div>
+
+  <section>
+    <h2>The problem was disagreement, not access</h2>
+    <p>Account data spanned six domains: firmographics, subscriptions, pipeline, revenue, support, and customer engagement. Nearly all of it originated in Salesforce and synced into the same warehouse, so access was never the problem. The trouble was that each team joined those domains differently, so Sales and Finance could ask the same question and get different answers, with no way to tell which was right.</p>
+    <p>The fields that looked like they answered these questions did not hold up when checked against the records underneath them. They are populated, which is not the same as being correct.</p>
+    <p>So the model had to do two things: define the account universe once, and replace the fields that could not be relied on.</p>
+  </section>
+
+  <section>
+    <h2>Six blocks, each answering one question</h2>
+    <p class="note" style="margin-bottom:1.6rem">Each block is assembled independently against the same account universe, so any one of them can be rebuilt without disturbing the others.</p>
+    <div class="blocks bleed">
+      <div>
+        <div class="ask">Who is this account?</div>
+        <div class="meta"><b>14 fields</b><br>industry, segment, region, hierarchy</div>
+      </div>
+      <div>
+        <div class="ask">Are they a customer?</div>
+        <div class="meta"><b>11 fields</b><br>active subscription, tenure, renewal date, early termination</div>
+      </div>
+      <div>
+        <div class="ask">Are we selling to them?</div>
+        <div class="meta"><b>23 fields</b><br>open pipeline, win rate, cycle length, expansion history</div>
+      </div>
+      <div>
+        <div class="ask">How much do they pay?</div>
+        <div class="meta"><b>6 fields</b><br>ACV, product breadth, revenue expiring by horizon</div>
+      </div>
+      <div>
+        <div class="ask">How is their support experience?</div>
+        <div class="meta"><b>12 fields</b><br>case volume, resolution time, SLA, escalation rate</div>
+      </div>
+      <div>
+        <div class="ask">Where are they in their journey?</div>
+        <div class="meta"><b>4 fields</b><br>lifecycle stage, derived across all domains</div>
+      </div>
+    </div>
+    <div class="tally">one row per account &nbsp;·&nbsp; 70 signals &nbsp;·&nbsp; 8 lifecycle stages</div>
+  </section>
+
+  <section>
+    <h2>What the model defines rather than inherits</h2>
+    <p style="margin-bottom:1.9rem">Two fields already existed that looked like they answered these questions. Both were populated. Neither could be used as the basis for a decision.</p>
+
+    <div class="def">
+      <h3>Active status and renewal date</h3>
+      <p>Salesforce carries both as static fields, maintained manually rather than derived. Checked against the subscription records underneath them, neither held up. The model derives its own. An account is active when a subscription has an end date in the future and no termination on it, and the next renewal date is the earliest end date among those active subscriptions. Both are logic that can be read and checked.</p>
+    </div>
+
+    <div class="def">
+      <h3>Lifecycle stage</h3>
+      <p>Gainsight carries a Company Stage field, but it was 70% null and its categories did not draw the distinctions the business needed. The model defines eight stages instead, derived from subscription, pipeline and revenue signals. Evaluated as a waterfall, first matching condition wins. Order matters: an account qualifying for both “Up for Renewal” and “Onboarding” gets “Up for Renewal” because urgency takes priority.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>The language model writes, it does not calculate</h2>
+    <p style="margin-bottom:1.8rem">The failure mode for natural language analytics is not refusing to answer. It is answering fluently and being wrong, with nothing in the output to signal it. The split below is how this one avoids that.</p>
+    <div class="split bleed">
+      <div>
+        <span class="tag">deterministic</span>
+        <p>A question routes by keyword to one of 36 governed query functions. The function computes against the model. Every number on screen comes from code that can be read, and the filters behind each answer are shown alongside it.</p>
+      </div>
+      <div>
+        <span class="tag">generative</span>
+        <p>Claude receives the computed aggregates and writes the business framing around them: what the pattern suggests, what it might be worth doing. It never sees raw records and never produces a figure of its own.</p>
+      </div>
+    </div>
+    <div class="caveat">The model cannot invent a number it was never allowed to compute. That constraint, rather than better prompting, is what makes the answers safe to act on.</div>
+  </section>
+
+  <section>
+    <h2>How it is built</h2>
+    <p class="note" style="margin-bottom:1.4rem">Source systems through to the tool, including the part that is still a snapshot rather than a live connection.</p>
+    <div class="flow bleed">
+      <svg viewBox="0 0 900 930" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Build flow: Salesforce and Gainsight sync into a Databricks warehouse, where the governed Account 360 model is built. The model exports to CSV, which a Python build script turns into a query dataset, lookup index and query functions. A deterministic query layer and a Claude narrative layer sit on top, producing the Intelligence Q and A tool. A roadmap step replaces the CSV snapshot with a live Databricks MCP connection.">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="arr-gray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <text x="50" y="32" font-family="DM Mono, monospace" font-size="11" fill="#aaa" letter-spacing="1.2">01 · SOURCE DATA</text>
+      <rect x="170" y="44" width="240" height="54" rx="8" fill="#EBF3FD" stroke="#378ADD" stroke-width="1.2"/>
+      <text x="290" y="66" text-anchor="middle" font-family="Sora, sans-serif" font-size="14" font-weight="600" fill="#042C53">Salesforce</text>
+      <text x="290" y="84" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#185FA5">accounts · subs · pipeline · cases</text>
+      <rect x="452" y="44" width="240" height="54" rx="8" fill="#EBF3FD" stroke="#378ADD" stroke-width="1.2"/>
+      <text x="572" y="66" text-anchor="middle" font-family="Sora, sans-serif" font-size="14" font-weight="600" fill="#042C53">Gainsight</text>
+      <text x="572" y="84" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#185FA5">activity timeline</text>
+      <line x1="290" y1="98" x2="290" y2="124" stroke="#aaa" stroke-width="1.2" marker-end="url(#arr)"/>
+      <line x1="572" y1="98" x2="572" y2="124" stroke="#aaa" stroke-width="1.2" marker-end="url(#arr)"/>
+
+      <rect x="170" y="126" width="522" height="52" rx="8" fill="#EBF3FD" stroke="#378ADD" stroke-width="1.5"/>
+      <text x="431" y="147" text-anchor="middle" font-family="Sora, sans-serif" font-size="14" font-weight="600" fill="#042C53">Databricks — data warehouse</text>
+      <text x="431" y="165" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#185FA5">source systems synced into Unity Catalog</text>
+      <line x1="431" y1="178" x2="431" y2="208" stroke="#aaa" stroke-width="1.2" marker-end="url(#arr)"/>
+
+      <text x="50" y="228" font-family="DM Mono, monospace" font-size="11" fill="#aaa" letter-spacing="1.2">02 · DATA MODEL</text>
+      <rect x="50" y="240" width="762" height="60" rx="8" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/>
+      <text x="431" y="264" text-anchor="middle" font-family="Sora, sans-serif" font-size="14" font-weight="600" fill="#04342C">Account 360 — governed data model</text>
+      <text x="431" y="285" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#0F6E56">1 row per account · 70 pre-calculated signals · 8-stage lifecycle waterfall · 62,244 accounts</text>
+      <line x1="431" y1="300" x2="431" y2="330" stroke="#aaa" stroke-width="1.2" marker-end="url(#arr)"/>
+
+      <text x="50" y="350" font-family="DM Mono, monospace" font-size="11" fill="#aaa" letter-spacing="1.2">03 · CSV EXPORT</text>
+      <rect x="210" y="362" width="470" height="54" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="1.2"/>
+      <text x="445" y="384" text-anchor="middle" font-family="Sora, sans-serif" font-size="14" font-weight="600" fill="#2C2C2A">Account_360_Data.csv</text>
+      <text x="445" y="403" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#5F5E5A">point-in-time snapshot · 70 columns · rebuilt on each model refresh</text>
+      <rect x="696" y="368" width="170" height="42" rx="6" fill="#FFF8E6" stroke="#BA7517" stroke-width="1" stroke-dasharray="4 3"/>
+      <text x="781" y="385" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#854F0B">⚠ current limitation</text>
+      <text x="781" y="400" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#854F0B">snapshot, not live data</text>
+      <line x1="680" y1="389" x2="698" y2="389" stroke="#BA7517" stroke-width="0.8" stroke-dasharray="3 2"/>
+      <line x1="431" y1="416" x2="431" y2="446" stroke="#aaa" stroke-width="1.2" marker-end="url(#arr)"/>
+
+      <text x="50" y="466" font-family="DM Mono, monospace" font-size="11" fill="#aaa" letter-spacing="1.2">04 · BUILD TOOL</text>
+      <rect x="50"  y="478" width="220" height="58" rx="8" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.2"/>
+      <text x="160" y="500" text-anchor="middle" font-family="Sora, sans-serif" font-size="14" font-weight="600" fill="#26215C">Query dataset</text>
+      <text x="160" y="519" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#534AB7">9,614 accounts</text>
+      <rect x="286" y="478" width="220" height="58" rx="8" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.2"/>
+      <text x="396" y="500" text-anchor="middle" font-family="Sora, sans-serif" font-size="14" font-weight="600" fill="#26215C">Lookup index</text>
+      <text x="396" y="519" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#534AB7">all 62,244 accounts by ID</text>
+      <rect x="522" y="478" width="220" height="58" rx="8" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.2"/>
+      <text x="632" y="500" text-anchor="middle" font-family="Sora, sans-serif" font-size="14" font-weight="600" fill="#26215C">36 query functions</text>
+      <text x="632" y="519" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#534AB7">JavaScript · 6 categories</text>
+      <line x1="160" y1="536" x2="160" y2="558" stroke="#aaa" stroke-width="1.2"/>
+      <line x1="396" y1="536" x2="396" y2="558" stroke="#aaa" stroke-width="1.2"/>
+      <line x1="632" y1="536" x2="632" y2="558" stroke="#aaa" stroke-width="1.2"/>
+      <line x1="160" y1="558" x2="632" y2="558" stroke="#aaa" stroke-width="1.2"/>
+      <line x1="431" y1="558" x2="431" y2="584" stroke="#aaa" stroke-width="1.2" marker-end="url(#arr)"/>
+
+      <text x="50" y="604" font-family="DM Mono, monospace" font-size="11" fill="#aaa" letter-spacing="1.2">05 · AI LAYER</text>
+      <rect x="50"  y="616" width="370" height="62" rx="8" fill="#FAECE7" stroke="#D85A30" stroke-width="1.2"/>
+      <text x="235" y="638" text-anchor="middle" font-family="Sora, sans-serif" font-size="14" font-weight="600" fill="#4A1B0C">Query logic</text>
+      <text x="235" y="655" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#993C1D">deterministic · keyword routes to governed functions</text>
+      <text x="235" y="671" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#993C1D">every answer is auditable</text>
+      <rect x="442" y="616" width="370" height="62" rx="8" fill="#FAECE7" stroke="#D85A30" stroke-width="1.2"/>
+      <text x="627" y="638" text-anchor="middle" font-family="Sora, sans-serif" font-size="14" font-weight="600" fill="#4A1B0C">Narrative — Claude API</text>
+      <text x="627" y="655" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#993C1D">generates business framing from</text>
+      <text x="627" y="671" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#993C1D">computed aggregates</text>
+      <line x1="235" y1="678" x2="235" y2="700" stroke="#aaa" stroke-width="1.2"/>
+      <line x1="627" y1="678" x2="627" y2="700" stroke="#aaa" stroke-width="1.2"/>
+      <line x1="235" y1="700" x2="627" y2="700" stroke="#aaa" stroke-width="1.2"/>
+      <line x1="431" y1="700" x2="431" y2="726" stroke="#aaa" stroke-width="1.2" marker-end="url(#arr)"/>
+
+      <rect x="230" y="738" width="402" height="66" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="2"/>
+      <text x="431" y="762" text-anchor="middle" font-family="Sora, sans-serif" font-size="15" font-weight="600" fill="#26215C">Intelligence Q&amp;A Tool</text>
+      <text x="431" y="780" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#534AB7">Python build script · self-contained HTML</text>
+      <text x="431" y="795" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#534AB7">opens in any browser · no server required</text>
+
+      <line x1="431" y1="804" x2="431" y2="830" stroke="#ccc" stroke-width="1.2" marker-end="url(#arr-gray)"/>
+      <text x="50" y="850" font-family="DM Mono, monospace" font-size="11" fill="#ccc" letter-spacing="1.2">06 · ROADMAP — NEXT ITERATION</text>
+      <rect x="50" y="862" width="762" height="54" rx="8" fill="#fafafa" stroke="#ccc" stroke-width="1" stroke-dasharray="5 4"/>
+      <text x="431" y="884" text-anchor="middle" font-family="Sora, sans-serif" font-size="14" font-weight="600" fill="#bbb">Databricks MCP — live data connection</text>
+      <text x="431" y="903" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#ccc">replaces CSV snapshot · any question answerable · always current · no file size limit</text>
+      </svg>
+    </div>
+  </section>
+
+</div>
+
+<div class="wrap demo">
+  <div class="demo-card bleed">
+    <h2>Try it</h2>
+    <p>The full tool, running in the browser with no server behind it. Pick a question from one of the six categories, or look up a single account and read its profile. Answers come back with the filters that produced them.</p>
+    <a class="btn" href="Account360_QA_Demo.html">Open the demo</a>
+    <div class="sub">Synthetic data throughout. Names, revenue, product names and dates are fictional. Best on a desktop screen.</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <footer>
+    <span>Tingyi Lu</span>
+    <a href="https://www.linkedin.com/">LinkedIn</a>
+    <a href="mailto:tingyilu121@gmail.com">tingyilu121@gmail.com</a>
+  </footer>
+</div>
+
+</body>
+</html>
