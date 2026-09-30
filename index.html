@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Account 360 — Tingyi Lu</title>
-<meta name="description" content="A governed account model with a natural language layer: one row per account, 70 signals, six source domains, and a deliberate limit on what the AI is allowed to decide.">
+<meta name="description" content="A governed account model that consolidates multiple data domains, with AI layered on top so anyone can ask a question in plain language and trust what comes back.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -51,7 +51,7 @@ body{
 .masthead nav a:hover,.masthead nav a:focus-visible{color:var(--indigo);border-color:var(--indigo);}
 
 /* ---------- hero: the query ---------- */
-.hero{padding:5rem 0 4.2rem;}
+.hero{padding:5rem 0 0;}
 .prompt{
   font-family:var(--mono);font-size:.74rem;color:var(--faint);
   margin-bottom:1.1rem;
@@ -60,6 +60,7 @@ body{
   font-size:clamp(2.05rem,5.6vw,3.35rem);
   font-weight:300;font-style:italic;line-height:1.24;
   letter-spacing:-.016em;max-width:19ch;
+  hanging-punctuation:first;
   text-wrap:balance;
 }
 .caret{
@@ -76,8 +77,24 @@ body{
 }
 .hero .lede strong{color:var(--ink);font-weight:500;}
 
+.btn-hero{margin-top:2rem;}
+
+/* ---------- demo screenshot ---------- */
+.shot{margin-top:3rem;margin-bottom:1rem;}
+.shot a{display:block;border-radius:10px;overflow:hidden;
+  border:1px solid #23242b;
+  box-shadow:0 1px 2px rgba(16,16,20,.06), 0 12px 34px -14px rgba(16,16,20,.34);
+  transition:box-shadow .16s ease;}
+.shot a:hover,.shot a:focus-visible{
+  box-shadow:0 1px 2px rgba(16,16,20,.08), 0 18px 44px -14px rgba(83,74,183,.36);}
+.shot img{display:block;width:100%;height:auto;}
+.shot figcaption{
+  font-family:var(--mono);font-size:.72rem;color:var(--faint);
+  margin-top:.85rem;text-align:center;}
+
 /* ---------- sections ---------- */
 section{padding:3.6rem 0;border-top:1px solid var(--rule);}
+.shot + section{margin-top:2.6rem;}
 h2{
   font-size:1.34rem;font-weight:500;letter-spacing:-.008em;
   margin-bottom:1.5rem;
@@ -111,6 +128,16 @@ p + p{margin-top:1.05rem;}
   font-family:var(--mono);font-size:.74rem;color:var(--muted);
   margin-top:1rem;
 }
+
+/* ---------- signal definitions ---------- */
+.sig{margin-top:1.1rem;}
+.sig > div{padding:1.1rem 0;border-top:1px solid var(--rule);}
+.sig > div:last-child{border-bottom:1px solid var(--rule);}
+.sig dt{font-family:var(--mono);font-size:.82rem;color:var(--indigo);margin-bottom:.45rem;}
+.sig dd{margin:0;max-width:var(--measure);}
+.sig .rule{font-family:var(--mono);font-size:.76rem;color:var(--muted);line-height:1.55;
+  background:var(--indigo-wash);border-radius:6px;padding:.5rem .7rem;margin-bottom:.6rem;display:inline-block;}
+.sig dd:not(.rule){font-size:1rem;}
 
 /* ---------- defined-not-inherited blocks ---------- */
 .def{padding-left:1.1rem;border-left:2px solid var(--indigo);}
@@ -187,20 +214,27 @@ a:focus-visible,.btn:focus-visible{outline:2px solid var(--indigo);outline-offse
 
   <div class="hero">
     <div class="prompt">Ask the account base</div>
-    <div class="q">Which Up for Renewal accounts have no open pipeline?<span class="caret"></span></div>
-    <p class="lede">Answering that meant reconciling six source domains into one governed row per account, and deciding what the language model was allowed to do with them. This is <strong>Account 360</strong>: 62,244 accounts, 70 pre-calculated signals, and a natural language layer that never touches a number.</p>
+    <div class="q">“Which Up for Renewal accounts have no open pipeline?”<span class="caret"></span></div>
+    <p class="lede">Anyone should be able to ask a question like that in plain language and trust what comes back. <strong>Account 360</strong> consolidates multiple data domains into a single governed model, then layers AI on top to write the framing, never the numbers.</p>
+    <a class="btn btn-hero" href="Account360_QA_Demo.html" target="_blank" rel="noopener">Open the demo</a>
   </div>
 
+  <figure class="shot bleed">
+    <a href="Account360_QA_Demo.html" target="_blank" rel="noopener">
+      <img src="demo-preview.jpg" alt="The Account 360 Q and A tool answering a question about Up for Renewal accounts with no open pipeline, showing summary metrics, an account table, a written narrative and the filter logic behind the result." loading="eager" width="2880" height="1720">
+    </a>
+    <figcaption>62,244 accounts &nbsp;·&nbsp; 70 signals &nbsp;·&nbsp; 6 source domains &nbsp;·&nbsp; 8 lifecycle stages</figcaption>
+  </figure>
+
   <section>
-    <h2>The problem was disagreement, not access</h2>
-    <p>Account data spanned six domains: firmographics, subscriptions, pipeline, revenue, support, and customer engagement. Nearly all of it originated in Salesforce and synced into the same warehouse, so access was never the problem. The trouble was that each team joined those domains differently, so Sales and Finance could ask the same question and get different answers, with no way to tell which was right.</p>
-    <p>The fields that looked like they answered these questions did not hold up when checked against the records underneath them. They are populated, which is not the same as being correct.</p>
-    <p>So the model had to do two things: define the account universe once, and replace the fields that could not be relied on.</p>
+    <h2>The problem is disagreement, not access</h2>
+    <p>Account data lives across many domains, and in most companies reaching it is not the hard part. Agreeing on what it means is. Ask two teams what an active customer is and you can get two answers, both defensible. Without a definition the data itself enforces, every report rebuilds one, and the same question returns different numbers depending on who ran it.</p>
+    <p>That is what a governed model is for, and consolidating the domains is only half of it. The other half is locking the business logic inside the model, so a definition is decided once and every answer downstream inherits it rather than reinventing it.</p>
   </section>
 
   <section>
     <h2>Six blocks, each answering one question</h2>
-    <p class="note" style="margin-bottom:1.6rem">Each block is assembled independently against the same account universe, so any one of them can be rebuilt without disturbing the others.</p>
+    <p style="margin-bottom:1.6rem">Account 360 is one answer to that. Each data domain becomes its own block, answering one question someone actually asks about an account, and every block is assembled independently against the same account universe so any one of them can be rebuilt without disturbing the others.</p>
     <div class="blocks bleed">
       <div>
         <div class="ask">Who is this account?</div>
@@ -228,11 +262,25 @@ a:focus-visible,.btn:focus-visible{outline:2px solid var(--indigo);outline-offse
       </div>
     </div>
     <div class="tally">one row per account &nbsp;·&nbsp; 70 signals &nbsp;·&nbsp; 8 lifecycle stages</div>
+
+    <p style="margin-top:2.4rem">Every signal carries its rule with it. Two of the seventy:</p>
+    <dl class="sig">
+      <div>
+        <dt>has_active_subscription</dt>
+        <dd class="rule">1 if any subscription has end_date &ge; today AND terminated_date is null or &ge; today</dd>
+        <dd>The governed answer to the question two teams disagree about. Active is a fact about a subscription record, not a status someone set.</dd>
+      </div>
+      <div>
+        <dt>non_renewal_wins</dt>
+        <dd class="rule">count of closed-won deals that are not renewals</dd>
+        <dd>Expansion only starts at the second one, because the first non-renewal win is the original land. That threshold is a business judgment, and it lives in the model rather than in whoever writes the next query.</dd>
+      </div>
+    </dl>
   </section>
 
   <section>
     <h2>What the model defines rather than inherits</h2>
-    <p style="margin-bottom:1.9rem">Two fields already existed that looked like they answered these questions. Both were populated. Neither could be used as the basis for a decision.</p>
+    <p style="margin-bottom:1.9rem">Two definitions in this model replaced fields that already existed. Both of those fields were populated, which is exactly why they were trusted. Neither held up when checked against the records underneath them.</p>
 
     <div class="def">
       <h3>Active status and renewal date</h3>
@@ -241,13 +289,13 @@ a:focus-visible,.btn:focus-visible{outline:2px solid var(--indigo);outline-offse
 
     <div class="def">
       <h3>Lifecycle stage</h3>
-      <p>Gainsight carries a Company Stage field, but it was 70% null and its categories did not draw the distinctions the business needed. The model defines eight stages instead, derived from subscription, pipeline and revenue signals. Evaluated as a waterfall, first matching condition wins. Order matters: an account qualifying for both “Up for Renewal” and “Onboarding” gets “Up for Renewal” because urgency takes priority.</p>
+      <p>Gainsight carries a Company Stage field, but it was 70% null and its categories did not draw the distinctions the business needed. The model defines eight stages instead, derived from subscription, pipeline and revenue signals. Evaluated as a waterfall, first matching condition wins. An account qualifying for both “Up for Renewal” and “Onboarding” gets “Up for Renewal” because urgency takes priority.</p>
     </div>
   </section>
 
   <section>
-    <h2>The language model writes, it does not calculate</h2>
-    <p style="margin-bottom:1.8rem">The failure mode for natural language analytics is not refusing to answer. It is answering fluently and being wrong, with nothing in the output to signal it. The split below is how this one avoids that.</p>
+    <h2>The AI writes, it does not calculate</h2>
+    <p style="margin-bottom:1.8rem">The failure mode for AI analytics is not refusing to answer. It is answering fluently and being wrong, with nothing in the output to signal it. The split below is how this one avoids that.</p>
     <div class="split bleed">
       <div>
         <span class="tag">deterministic</span>
